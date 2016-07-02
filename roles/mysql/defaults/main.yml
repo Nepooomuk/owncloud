@@ -1,0 +1,70 @@
+# Basic settings
+mysql_port: 3306
+mysql_bind_address: "0.0.0.0"
+mysql_root_password: 'pass'
+mysql_language: '/usr/share/mysql/'
+
+mysql_datadir: '/var/lib/mysql'
+
+# Log-Files
+mysql_general_log_file: '/var/log/mysql/mysql.log'
+mysql_general_log: 1
+
+mysql_slow_query_log: 0
+mysql_log_slow_queries: '/var/log/mysql/mysql-slow.log'
+# mysql long_query_time in seconds, floats are possible values
+mysql_long_query_time: 1
+# log-queries-not-using-indexes
+# log_slow_verbosity     = query_plan
+mysql_log_bin: '/var/lib/mysql/mysql-bin'
+mysql_log_slave_updates: 1
+mysql_performance_schema: 'on'
+
+# Connection Timeouts
+mysql_wait_timeout: 28800
+mysql_interactive_timeout: 28800
+
+# Fine Tuning
+mysql_key_buffer: '16M'
+mysql_max_allowed_packet: '128M'
+mysql_thread_stack: '192K'
+mysql_cache_size: 8
+mysql_myisam_recover: 'FORCE,BACKUP'
+mysql_max_connections: 4096
+mysql_table_cache: 3000
+mysql_thread_concurrency: 10
+mysql_query_cache_type: 0
+mysql_query_cache_limit: '1M'
+mysql_query_cache_size: '16M'
+mysql_character_set_server: 'utf8'
+mysql_collation_server: 'utf8_general_ci'
+mysql_mysqldump_max_allowed_packet: '128M'
+mysql_isamchk_key_buffer: '16M'
+mysql_open_files_limit: 12000
+mysql_table_definition_cache: 1024
+
+# Replication
+mysql_server_id: 1
+mysql_increment_offset: 1
+mysql_increment_increment: 2
+
+# InnoDB tuning
+mysql_innodb_file_per_table: 1
+mysql_innodb_flush_method: 'O_DIRECT'
+mysql_innodb_buffer_pool_size: '512M'
+mysql_innodb_flush_log_at_trx_commit: '1'
+mysql_innodb_lock_wait_timeout: 50
+mysql_innodb_log_buffer_size: '1M'
+mysql_innodb_log_file_size: '128M'
+mysql_innodb_log_files_in_group: 2
+mysql_innodb_buffer_pool_instances: 10
+mysql_innodb_support_xa: 1
+# automatic buffer pool dump, value in seconds
+mysql_innodb_buffer_pool_restore_at_startup: 300
+mysql_innodb_additional_mem_pool_size : '20M'
+
+# List of databases to be created
+mysql_databases: []
+
+# List of users to be created
+mysql_users: []

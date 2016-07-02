@@ -1,0 +1,163 @@
+[client]
+port        = {{ mysql_port }}
+socket      = /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+socket      = /var/run/mysqld/mysqld.sock
+nice        = 0
+
+[mysqld]
+# * Basic Settings
+user        = mysql
+pid-file    = /var/run/mysqld/mysqld.pid
+socket      = /var/run/mysqld/mysqld.sock
+port        = {{ mysql_port }}
+basedir     = /usr
+datadir     = {{ mysql_datadir }}
+tmpdir      = /tmp
+
+# language is for pre-5.5. In 5.5 it is an alias for lc_messages_dir.
+{% if mysql_version | version_compare('5.5.0', '>=', strict=True) %}
+lc_messages_dir = {{ mysql_language }}
+{% else %}
+language    = {{ mysql_language }}
+{% endif %}
+bind-address    = {{ mysql_bind_address }}
+skip-external-locking
+performance_schema      = {{ mysql_performance_schema }}
+
+# Connection-Timeouts
+wait_timeout            = {{ mysql_wait_timeout }}
+interactive_timeout     = {{ mysql_interactive_timeout }}
+
+# * Fine Tuning
+{% if mysql_version | version_compare('5.6.0', '>=', strict=True) %}
+key_buffer_size         = {{ mysql_isamchk_key_buffer }}
+{% else %}
+key_buffer              = {{ mysql_isamchk_key_buffer }}
+{% endif %}
+max_allowed_packet      = {{ mysql_max_allowed_packet }}
+thread_stack            = {{ mysql_thread_stack }}
+thread_cache_size       = {{ mysql_cache_size }}
+
+{% if mysql_version | version_compare('5.6.0', '>=', strict=True) %}
+myisam-recover-options  = {{ mysql_myisam_recover }}
+"etc_mysql_my.cnf.j2" 162L, 5532C
+{% if mysql_version | version_compare('5.6.0', '>=', strict=True) %}
+myisam-recover-options  = {{ mysql_myisam_recover }}
+{% else %}
+myisam_recover          = {{ mysql_myisam_recover }}
+{% endif %}
+
+max_connections         = {{ mysql_max_connections }}
+table_open_cache        = {{ mysql_table_cache }}
+thread_concurrency      = {{ mysql_thread_concurrency }}
+open_files_limit        = {{ mysql_open_files_limit }}
+table_definition_cache  = {{ mysql_table_definition_cache }}
+
+
+# ** Query Cache Configuration
+query_cache_type        = {{ mysql_query_cache_type }}
+query_cache_limit       = {{ mysql_query_cache_limit }}
+query_cache_size        = {{ mysql_query_cache_size }}
+
+# ** Logging and Replication
+log_warnings
+# only for debugging, cause it slows down server
+#general_log_file       = {{ mysql_general_log_file }}
+#general_log            = {{ mysql_general_log }}
+#
+slow_query_log          = 0
+{% if mysql_version | version_compare('5.6.0', '>=', strict=True) %}
+#slow_query_log_file     = {{ mysql_log_slow_queries }}
+{% else %}
+#log_slow_queries        = {{ mysql_log_slow_queries }}
+{% endif %}
+long_query_time         = {{ mysql_long_query_time }}
+#log-queries-not-using-indexes
+#log_slow_verbosity     = query_plan
+
+# Replication-settings
+server-id                 = {{ mysql_server_id }}
+auto_increment_offset     = {{ mysql_increment_offset}}
+auto_increment_increment  = {{ mysql_increment_increment }}
+log_bin                   = {{ mysql_log_bin }}
+relay_log                 = /var/lib/mysql/mysqld-relay-bin
+expire_logs_days          = 10
+max_binlog_size           = 100M
+#binlog_do_db              = include_database_name
+binlog_ignore_db          = lost+found
+{% if mysql_repl_type is defined %}
+binlog_format             = {{ mysql_repl_type }}
+{% endif %}
+ignore-db-dir             = lost+found
+log_slave_updates         = {{ mysql_log_slave_updates }}
+skip_slave_start
+log_slave_updates         = {{ mysql_log_slave_updates }}
+skip_slave_start
+sync_master_info          = 1
+sync_relay_log            = 1
+sync_relay_log_info       = 1
+relay_log_recovery        = 1
+
+
+# ** InnoDB
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+# Read the manual for more InnoDB related options. There are many!
+default_storage_engine    = InnoDB
+innodb_flush_log_at_trx_commit = {{ mysql_innodb_flush_log_at_trx_commit }}
+
+innodb_buffer_pool_size   = {{ mysql_innodb_buffer_pool_size }}
+
+
+{% if mysql_innodb_flush_method != 'fdatasync': %}
+innodb_flush_method       = {{ mysql_innodb_flush_method }}
+{% endif %}
+innodb_lock_wait_timeout  = {{ mysql_innodb_lock_wait_timeout }}
+innodb_log_buffer_size    = {{ mysql_innodb_log_buffer_size }}
+innodb_log_file_size      = {{ mysql_innodb_log_file_size }}
+innodb_log_files_in_group = {{ mysql_innodb_log_files_in_group }}
+innodb_file_per_table     = {{ mysql_innodb_file_per_table }}
+innodb_buffer_pool_instances    = {{ mysql_innodb_buffer_pool_instances }}
+{% if mysql_version | version_compare('5.6.0', 'lt', strict=True) %}
+innodb_additional_mem_pool_size = {{ mysql_innodb_additional_mem_pool_size }}
+{% endif %}
+innodb_support_xa         = {{ mysql_innodb_support_xa }}
+
+# automatic buffer pool dump, value in seconds
+#innodb_buffer_pool_restore_at_startup = {{ mysql_innodb_buffer_pool_restore_at_startup }}
+
+# ** Security Features
+# Read the manual, too, if you want chroot!
+# chroot = /var/lib/mysql/
+#
+# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
+# ssl-ca=/etc/mysql/cacert.pem
+# ssl-cert=/etc/mysql/server-cert.pem
+# ssl-key=/etc/mysql/server-key.pem
+
+character_set_server = {{ mysql_character_set_server }}
+collation_server = {{ mysql_collation_server }}
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet  = {{ mysql_mysqldump_max_allowed_packet }}
+quote-names
+max_allowed_packet  = {{ mysql_mysqldump_max_allowed_packet }}
+
+[mysql]
+#no-auto-rehash # faster start of mysql but no tab completition
+
+[isamchk]
+{% if mysql_version | version_compare('5.6.0', '>=', strict=True) %}
+key_buffer_size = {{ mysql_isamchk_key_buffer }}
+{% else %}
+key_buffer      = {{ mysql_isamchk_key_buffer }}
+{% endif %}
+
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with '.cnf', otherwise they'll be ignored.
+#
+!includedir /etc/mysql/conf.d/

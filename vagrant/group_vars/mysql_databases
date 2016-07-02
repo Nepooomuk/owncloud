@@ -1,0 +1,10 @@
+---
+
+mysql_server_id: "{{ ansible_hostname.split('-')[3]|int }}"
+mysql_increment_offset: "{{ ansible_hostname.split('-')[3]|int }}"
+mysql_wait_timeout: 86400
+mysql_interactive_timeout: 86400
+mysql_databases:
+  - name: owncloud
+    collation: "utf8_bin"
+    encoding: "utf8"

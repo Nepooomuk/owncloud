@@ -1,0 +1,27 @@
+---
+- name: Add Ubuntu repository
+  apt_repository: repo='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe' state=present
+
+- name: Add OwnCloud repository
+  apt_repository: repo='deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_{{ ansible_distribution_version }}/ /' state=present update_cache=yes
+
+- name: Add OwnCloud repo key
+  apt_key: url='http://download.opensuse.org/repositories/isv:ownCloud:community/xUbuntu_{{ ansible_distribution_version }}/Release.key' state=present
+
+- name: Install dependencies
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+       - php-xml-parser
+       - php5-intl
+       - php5-mcrypt
+       - curl
+       - exim4
+       - php5-imagick
+       - php-apc
+
+- name: Install OwnCloud
+  apt: name=owncloud state=present
+
+- name: Configure Apache
+  replace: dest=/etc/apache2/sites-enabled/000-default.conf regexp='DocumentRoot /var/www/html' replace='DocumentRoot /var/www/owncloud'
+  notify: reload apache

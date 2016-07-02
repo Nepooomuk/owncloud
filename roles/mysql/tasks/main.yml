@@ -1,0 +1,14 @@
+---
+- name: Install MySQL
+  apt:
+    pkg: "{{ item }}"
+  with_items: 'mysql-server'
+
+- name: Start MySQL
+  service:
+    name: mysql
+    state: started
+
+#- include: configure.yml
+- include: users.yml
+- include: databases.yml
